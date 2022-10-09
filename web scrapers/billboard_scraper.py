@@ -17,13 +17,17 @@ def get_songs_and_artists(soup, fromdate):
     for row in resultstable:
         # print("r ",row)
         # i = 0
-        columns = row.find_all("span", {"class": "c-label"})
-        artist = columns[1].text.strip()
+        lis = row.find_all("li")
+        rank_label = lis[0]
         cht_date = fromdate
-        rank = columns[0].text.strip()
-        peak = columns[3].text.strip()
-        wks_on = columns[4].text.strip()
-        title = row.find_all("h3", {"id": "title-of-a-story"})[0].text.strip()
+        rank = rank_label.find_all("span", {"class": "c-label"})[0].text.strip()
+        columns = lis[3]
+        numbers = columns.find_all("span", {"class": "c-label"})
+        # print(columns)
+        artist = numbers[0].text.strip()
+        peak = numbers[2].text.strip()
+        wks_on = numbers[3].text.strip()
+        title = columns.find_all("h3", {"id": "title-of-a-story"})[0].text.strip()
         # for column in row.find_all("span", {"class": "c-label"}):
         #     if i == 1:
         #         artist = None
@@ -84,8 +88,8 @@ conn.execute(""" CREATE TABLE IF NOT EXISTS billboard_tracks (
                                     ); """)
 c = conn.cursor()
 fromdate = '1990-12-30'
-todate = '1990-01-05'
-while datetime.datetime.strptime(fromdate,'%Y-%m-%d').year < 2023:
+todate = '1991-01-05'
+while datetime.datetime.strptime(fromdate,'%Y-%m-%d').year < 1992:
     fromdate,todate = advance_week(fromdate)
     print('f ',fromdate,'t ',todate)
 
